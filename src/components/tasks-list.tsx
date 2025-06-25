@@ -1,17 +1,19 @@
-import type { Task } from '../pages/dashboard'
+import type { Task } from '../data/tasks'
+import TaskItem from './task-item'
 
 interface TasksListProps {
   tasks: Task[]
   type: 'to-do' | 'done'
 }
 
-function TasksList({ tasks }: TasksListProps) {
+function TasksList({ tasks, type }: TasksListProps) {
   return (
-    <ul>
+    <ul className='space-y-2.5'>
       {tasks.map((task) => (
-        <li key={task.id}>
-          <p>{task.title}</p>
-        </li>
+        <TaskItem
+          task={task}
+          type={type}
+        />
       ))}
     </ul>
   )

@@ -1,7 +1,10 @@
 import { Form } from '@heroui/form'
 import { Button, Input } from '@heroui/react'
+import { useNavigate } from 'react-router'
 
 function LoginForm() {
+  const navigate = useNavigate()
+
   return (
     <Form className='space-y-1'>
       <Input
@@ -17,6 +20,7 @@ function LoginForm() {
       <Button
         className='bg-neutral-900 text-neutral-100 font-bold'
         fullWidth
+        onClick={() => navigate('/dashboard')}
       >
         Entrar
       </Button>

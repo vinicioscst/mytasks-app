@@ -50,7 +50,7 @@ function Nav() {
                   </DropdownSection>
                   <DropdownSection aria-label='Ações de usuário'>
                     <DropdownItem key='edit-profile'>
-                      <p>Editar perfil</p>
+                      <p>Editar informações</p>
                     </DropdownItem>
                     <DropdownItem
                       key='logout'

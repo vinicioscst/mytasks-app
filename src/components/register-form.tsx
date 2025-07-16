@@ -104,7 +104,7 @@ function RegisterForm() {
             endContent={
               <button
                 aria-label='toggle password visibility'
-                className='focus:outline-none'
+                className='focus:outline-none pb-1.5'
                 type='button'
                 onClick={toggleVisibility}
               >

@@ -1,4 +1,4 @@
-import { addToast, Button, Form, Input } from '@heroui/react'
+import { Button, Form, Input } from '@heroui/react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Eye, EyeClosed, LoaderCircle } from 'lucide-react'
 import { useState } from 'react'
@@ -7,11 +7,11 @@ import {
   createUserSchema,
   type TCreateUserSchema
 } from '../utils/schemas/user/create-user'
-import axios, { AxiosError } from 'axios'
+import { authStore } from '../store/authStore'
 
 function RegisterForm() {
+  const { isLoading, register } = authStore((state) => state)
   const [isVisible, setIsVisible] = useState<boolean>(false)
-  const [isLoading, setIsLoading] = useState<boolean>(false)
   const toggleVisibility = () => setIsVisible(!isVisible)
 
   const { handleSubmit, control, reset } = useForm({
@@ -24,34 +24,8 @@ function RegisterForm() {
   })
 
   async function handleRegister(formData: TCreateUserSchema) {
-    try {
-      setIsLoading(true)
-      const baseUrl = import.meta.env.VITE_API_BASE_URL
-      if (!baseUrl) throw new Error('API não fornecida')
-
-      await axios.post(`${baseUrl}/api/users`, formData)
-
-      addToast({
-        title: 'Usuário criado com sucesso!',
-        color: 'success',
-        variant: 'flat'
-      })
-
-      reset()
-    } catch (error) {
-      console.log(error)
-      addToast({
-        title: 'Ocorreu um erro!',
-        description:
-          error instanceof AxiosError
-            ? error.response?.data.error
-            : (error as Error).message,
-        color: 'danger',
-        variant: 'flat'
-      })
-    } finally {
-      setIsLoading(false)
-    }
+    await register(formData)
+    reset()
   }
 
   return (
@@ -67,7 +41,7 @@ function RegisterForm() {
           fieldState: { invalid, error }
         }) => (
           <Input
-            label='Nome:'
+            label='Nome'
             type='text'
             variant='bordered'
             name={name}
@@ -91,7 +65,7 @@ function RegisterForm() {
           fieldState: { invalid, error }
         }) => (
           <Input
-            label='Email:'
+            label='Email'
             type='text'
             variant='bordered'
             name={name}
@@ -115,7 +89,7 @@ function RegisterForm() {
           fieldState: { invalid, error }
         }) => (
           <Input
-            label='Senha:'
+            label='Senha'
             type={isVisible ? 'text' : 'password'}
             variant='bordered'
             name={name}

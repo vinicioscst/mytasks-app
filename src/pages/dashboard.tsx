@@ -3,12 +3,17 @@ import Container from '../components/container'
 import Nav from '../components/nav'
 import { BrushCleaning, Plus } from 'lucide-react'
 import TasksList from '../components/tasks-list'
-import { tasks } from '../data/tasks'
-
-const toDoTasks = tasks.filter((task) => !task.isCompleted)
-const doneTasks = tasks.filter((task) => task.isCompleted)
+import { authStore } from '../store/authStore'
 
 function Dashboard() {
+  const { userData } = authStore((state) => state)
+
+  const toDoTasks = userData?.tasks
+    ? userData.tasks.filter((task) => !task.isCompleted)
+    : []
+  const doneTasks = userData?.tasks
+    ? userData.tasks.filter((task) => task.isCompleted)
+    : []
   return (
     <>
       <Nav />

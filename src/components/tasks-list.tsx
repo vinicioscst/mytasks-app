@@ -1,4 +1,4 @@
-import type { Task } from '../data/tasks'
+import type { Task } from '../store/authStore'
 import TaskItem from './task-item'
 
 interface TasksListProps {

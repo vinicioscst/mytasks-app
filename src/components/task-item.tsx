@@ -1,6 +1,6 @@
 import { Checkbox } from '@heroui/react'
 import { Eye, PenLine, Trash2 } from 'lucide-react'
-import type { Task } from '../data/tasks'
+import type { Task } from '../store/authStore'
 
 interface TaskItemProps {
   task: Task

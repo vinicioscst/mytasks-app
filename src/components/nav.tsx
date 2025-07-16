@@ -10,9 +10,16 @@ import {
 } from '@heroui/dropdown'
 import { Avatar } from '@heroui/react'
 import { useNavigate } from 'react-router'
+import { authStore } from '../store/authStore'
 
 function Nav() {
   const navigate = useNavigate()
+  const { logout, userData } = authStore((state) => state)
+
+  function handleLogout() {
+    logout()
+    navigate('/')
+  }
 
   return (
     <Navbar
@@ -32,8 +39,10 @@ function Nav() {
                   <Avatar
                     isBordered
                     as='button'
-                    className='transition-transform'
-                    src='https://github.com/vinicioscst.png'
+                    className='transition-transform cursor-pointer'
+                    src={userData?.avatar}
+                    name={userData?.name[0].toUpperCase()}
+                    showFallback
                   />
                 </DropdownTrigger>
                 <DropdownMenu
@@ -45,7 +54,10 @@ function Nav() {
                     showDivider
                   >
                     <DropdownItem key='user-info'>
-                      <p className='font-semibold'>vinicios@email.com</p>
+                      <div className='flex flex-col'>
+                        <p className='font-semibold'>{userData?.name}</p>
+                        <p>{userData?.email}</p>
+                      </div>
                     </DropdownItem>
                   </DropdownSection>
                   <DropdownSection aria-label='Ações de usuário'>
@@ -56,7 +68,7 @@ function Nav() {
                       key='logout'
                       className='text-danger'
                       color='danger'
-                      onClick={() => navigate('/')}
+                      onClick={() => handleLogout()}
                     >
                       Fazer logout
                     </DropdownItem>

@@ -32,5 +32,5 @@ export function PublicRoute() {
     )
   }
 
-  return !isLoading && !userData ? <Outlet /> : <Navigate to='/dashboard' />
+  return !userData ? <Outlet /> : <Navigate to='/dashboard' />
 }

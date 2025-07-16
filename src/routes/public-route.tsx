@@ -21,6 +21,7 @@ export function PublicRoute() {
     }
 
     verifyUser()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   if (isLoading) {

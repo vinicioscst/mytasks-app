@@ -3,17 +3,11 @@ import Container from '../components/container'
 import Nav from '../components/nav'
 import { BrushCleaning, Plus } from 'lucide-react'
 import TasksList from '../components/tasks-list'
-import { authStore } from '../store/authStore'
+import { tasksStore } from '../store/tasksStore'
 
 function Dashboard() {
-  const { userData } = authStore((state) => state)
+  const { completedTasks, toDoTasks } = tasksStore((state) => state)
 
-  const toDoTasks = userData?.tasks
-    ? userData.tasks.filter((task) => !task.isCompleted)
-    : []
-  const doneTasks = userData?.tasks
-    ? userData.tasks.filter((task) => task.isCompleted)
-    : []
   return (
     <>
       <Nav />
@@ -33,7 +27,7 @@ function Dashboard() {
             <div className='space-y-4'>
               <h3 className='text-lg font-semibold'>A fazer</h3>
               <TasksList
-                tasks={toDoTasks}
+                tasks={toDoTasks()}
                 type='to-do'
               />
             </div>
@@ -50,8 +44,8 @@ function Dashboard() {
                 </Button>
               </div>
               <TasksList
-                tasks={doneTasks}
-                type='done'
+                tasks={completedTasks()}
+                type='completed'
               />
             </div>
           </div>

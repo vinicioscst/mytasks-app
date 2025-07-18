@@ -3,7 +3,7 @@ import TaskItem from './task-item'
 
 interface TasksListProps {
   tasks: Task[]
-  type: 'to-do' | 'done'
+  type: 'to-do' | 'completed'
 }
 
 function TasksList({ tasks, type }: TasksListProps) {

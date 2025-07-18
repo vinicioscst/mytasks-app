@@ -4,7 +4,7 @@ import type { Task } from '../store/authStore'
 
 interface TaskItemProps {
   task: Task
-  type: 'to-do' | 'done'
+  type: 'to-do' | 'completed'
 }
 
 function TaskItem({ task, type }: TaskItemProps) {
@@ -32,7 +32,7 @@ function TaskItem({ task, type }: TaskItemProps) {
       </li>
     )
 
-  if (type === 'done') {
+  if (type === 'completed') {
     return (
       <li key={task.id}>
         <div className='flex items-center justify-between gap-4'>

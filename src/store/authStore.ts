@@ -5,6 +5,7 @@ import { AxiosError } from 'axios'
 import { addToast } from '@heroui/toast'
 import { persist } from 'zustand/middleware'
 import { api } from '../config/api'
+import { tasksStore } from './tasksStore'
 
 interface User {
   id: string
@@ -70,6 +71,9 @@ export const authStore = create<IAuthStore>()(
 
           const { data } = await api.post('/auth', body)
           set(() => ({ userData: data, isLoggedIn: true }))
+
+          const { loadTasks } = tasksStore.getState()
+          loadTasks(data.tasks)
 
           return data.token
         } catch (error) {

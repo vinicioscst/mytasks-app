@@ -1,6 +1,9 @@
 import { Checkbox } from '@heroui/react'
-import { Eye, PenLine, Trash2 } from 'lucide-react'
+import { PenLine } from 'lucide-react'
 import type { Task } from '../store/authStore'
+import { formatDate } from '../utils/actions/formatDate'
+import ViewTaskModal from './view-task-modal'
+import DeleteTaskModal from './delete-task-modal'
 
 interface TaskItemProps {
   task: Task
@@ -8,8 +11,7 @@ interface TaskItemProps {
 }
 
 function TaskItem({ task, type }: TaskItemProps) {
-  const taskDate = new Date(task.dueDate)
-  const formattedTaskDate = new Intl.DateTimeFormat('pt-BR').format(taskDate)
+  const formattedTaskDate = formatDate(task.dueDate)
 
   if (type === 'to-do')
     return (
@@ -23,9 +25,12 @@ function TaskItem({ task, type }: TaskItemProps) {
           </div>
           <div className='flex items-center gap-2'>
             <div className='flex items-center gap-2'>
-              <Eye className='fill-green-100 stroke-green-500' />
+              <ViewTaskModal task={task} />
               <PenLine className='fill-blue-100 stroke-blue-500' />
-              <Trash2 className='fill-red-100 stroke-red-500' />
+              <DeleteTaskModal
+                taskId={task.id}
+                taskTitle={task.title}
+              />
             </div>
           </div>
         </div>

@@ -10,9 +10,13 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@heroui/date-picker": "^2.3.24",
+    "@heroui/modal": "^2.2.20",
     "@heroui/react": "^2.8.0-beta.10",
     "@heroui/toast": "^2.0.13",
     "@hookform/resolvers": "^5.1.1",
+    "@internationalized/date": "^3.8.2",
+    "@react-aria/i18n": "^3.12.10",
     "@tailwindcss/vite": "^4.1.10",
     "axios": "^1.10.0",
     "framer-motion": "^12.19.1",

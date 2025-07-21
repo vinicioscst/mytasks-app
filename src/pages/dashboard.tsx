@@ -1,9 +1,10 @@
 import { Button, Divider } from '@heroui/react'
 import Container from '../components/container'
 import Nav from '../components/nav'
-import { BrushCleaning, Plus } from 'lucide-react'
+import { BrushCleaning } from 'lucide-react'
 import TasksList from '../components/tasks-list'
 import { tasksStore } from '../store/tasksStore'
+import CreateTaskModal from '../components/create-task-modal'
 
 function Dashboard() {
   const { completedTasks, toDoTasks } = tasksStore((state) => state)
@@ -16,12 +17,7 @@ function Dashboard() {
           <div className='bg-white border border-neutral-200 rounded-lg shadow-lg p-7'>
             <div className='flex items-center justify-between'>
               <h2 className='text-xl font-bold'>Lista de tarefas</h2>
-              <Button
-                variant='flat'
-                startContent={<Plus />}
-              >
-                Adicionar tarefa
-              </Button>
+              <CreateTaskModal />
             </div>
             <Divider className='my-6' />
             <div className='space-y-4'>

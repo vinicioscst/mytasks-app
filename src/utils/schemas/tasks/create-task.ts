@@ -1,3 +1,4 @@
+import { CalendarDate } from '@internationalized/date'
 import z from 'zod'
 
 export const createTaskSchema = z.object({
@@ -9,7 +10,21 @@ export const createTaskSchema = z.object({
     .string({ error: 'Descrição deve ser texto' })
     .max(255, { error: 'Descrição deve conter no máximo 255 caracteres' })
     .nullable(),
-  dueDate: z.date({ error: 'Vencimento deve ser uma data' }).nonoptional(),
+  dueDate: z
+    .union([
+      z.null(),
+      z.instanceof(CalendarDate, { error: 'Vencimento deve ser uma data' })
+    ])
+    .transform((calendarDate) => {
+      if (calendarDate) {
+        return new Date(
+          calendarDate.year,
+          calendarDate.month - 1,
+          calendarDate.day
+        )
+      }
+    })
+    .nonoptional(),
   isCompleted: z
     .boolean({ error: 'Condição deve ser um booleano' })
     .nonoptional()

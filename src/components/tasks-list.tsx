@@ -11,6 +11,7 @@ function TasksList({ tasks, type }: TasksListProps) {
     <ul className='space-y-2.5'>
       {tasks.map((task) => (
         <TaskItem
+          key={task.id}
           task={task}
           type={type}
         />

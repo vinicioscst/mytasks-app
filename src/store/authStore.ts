@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 import type { TCreateUserSchema } from '../utils/schemas/user/create-user'
 import type { TLoginSchema } from '../utils/schemas/user/login'
-import { AxiosError } from 'axios'
+import { AxiosError, type AxiosResponse } from 'axios'
 import { addToast } from '@heroui/toast'
 import { persist } from 'zustand/middleware'
 import { api } from '../config/api'
@@ -28,7 +28,7 @@ export interface IAuthStore {
   isLoading: boolean
   userData: User | null
   register: (body: TCreateUserSchema) => Promise<void>
-  login: (body: TLoginSchema) => Promise<string>
+  login: (body: TLoginSchema) => Promise<void>
   logout: () => Promise<void>
   loadUser: () => Promise<void>
 }
@@ -69,13 +69,14 @@ export const authStore = create<IAuthStore>()(
         try {
           set(() => ({ isLoading: true }))
 
-          const { data } = await api.post('/auth', body)
+          const { data } = (await api.post(
+            '/auth',
+            body
+          )) as AxiosResponse<User>
           set(() => ({ userData: data, isLoggedIn: true }))
 
           const { loadTasks } = tasksStore.getState()
           loadTasks(data.tasks)
-
-          return data.token
         } catch (error) {
           console.log(error)
           addToast({
@@ -104,7 +105,12 @@ export const authStore = create<IAuthStore>()(
         try {
           set(() => ({ isLoading: true }))
 
-          const { data } = await api.get('/users/profile')
+          const { data } = (await api.get(
+            '/users/profile'
+          )) as AxiosResponse<User>
+
+          const { loadTasks } = tasksStore.getState()
+          loadTasks(data.tasks)
 
           set(() => ({ userData: data, isLoggedIn: true }))
         } catch (error) {

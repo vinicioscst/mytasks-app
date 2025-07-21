@@ -4,7 +4,7 @@ import type { TUpdateTaskSchema } from '../utils/schemas/tasks/update-task'
 import type { Task } from './authStore'
 import { api } from '../config/api'
 import { addToast } from '@heroui/toast'
-import { AxiosError } from 'axios'
+import { AxiosError, type AxiosResponse } from 'axios'
 
 export interface ITasksStore {
   isLoading: boolean
@@ -12,28 +12,28 @@ export interface ITasksStore {
   completedTasks: () => Task[]
   toDoTasks: () => Task[]
   loadTasks: (userTasks: Task[]) => void
-  create: (body: TCreateTaskSchema) => Promise<void>
-  update: (body: TUpdateTaskSchema) => Promise<void>
-  delete: (id: string) => Promise<void>
+  createTask: (body: TCreateTaskSchema) => Promise<void>
+  updateTask: (body: TUpdateTaskSchema) => Promise<void>
+  deleteTask: (id: string) => Promise<void>
 }
 
 export const tasksStore = create<ITasksStore>()((set, get) => ({
   isLoading: false,
   tasks: [],
   completedTasks: () => {
-    return get().tasks.filter((task) => !task.isCompleted) || []
+    return get().tasks.filter((task) => task.isCompleted) || []
   },
   toDoTasks: () => {
     return get().tasks.filter((task) => !task.isCompleted) || []
   },
   loadTasks: (userTasks) => {
-    set((state) => ({ tasks: [...state.tasks, ...userTasks] }))
+    set(() => ({ tasks: userTasks }))
   },
-  create: async (body) => {
+  createTask: async (body) => {
     try {
       set(() => ({ isLoading: true }))
 
-      const { data } = await api.post('/tasks', body)
+      const { data } = (await api.post('/tasks', body)) as AxiosResponse<Task>
 
       set((state) => ({ tasks: [...state.tasks, data] }))
 
@@ -57,18 +57,21 @@ export const tasksStore = create<ITasksStore>()((set, get) => ({
       set(() => ({ isLoading: false }))
     }
   },
-  update: async (body) => {
+  updateTask: async (body) => {
     try {
       set(() => ({ isLoading: true }))
 
       const { id, ...task } = body
-      const { data } = await api.patch(`/tasks/${id}`, task)
+      const { data } = (await api.patch(
+        `/tasks/${id}`,
+        task
+      )) as AxiosResponse<Task>
 
       const allTasks = get().tasks
       const updatedTaskIndex = allTasks.findIndex((task) => task.id === id)
       allTasks[updatedTaskIndex] = data
 
-      set(() => ({ tasks: [...allTasks] }))
+      set(() => ({ tasks: allTasks }))
 
       addToast({
         title: 'Tarefa atualizada com sucesso!',
@@ -90,7 +93,7 @@ export const tasksStore = create<ITasksStore>()((set, get) => ({
       set(() => ({ isLoading: false }))
     }
   },
-  delete: async (id) => {
+  deleteTask: async (id) => {
     try {
       set(() => ({ isLoading: true }))
       await api.delete(`/tasks/${id}`)
@@ -99,7 +102,7 @@ export const tasksStore = create<ITasksStore>()((set, get) => ({
       const remainingTasks = allTasks.filter((task) => task.id !== id)
 
       set(() => ({
-        tasks: [...remainingTasks]
+        tasks: remainingTasks
       }))
 
       addToast({

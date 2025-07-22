@@ -4,7 +4,7 @@ import Nav from '../components/nav'
 import { BrushCleaning } from 'lucide-react'
 import TasksList from '../components/tasks-list'
 import { tasksStore } from '../store/tasksStore'
-import CreateTaskModal from '../components/create-task-modal'
+import CreateOrUpdateTaskModal from '../components/create-or-update-task-modal'
 
 function Dashboard() {
   const { completedTasks, toDoTasks } = tasksStore((state) => state)
@@ -17,15 +17,12 @@ function Dashboard() {
           <div className='bg-white border border-neutral-200 rounded-lg shadow-lg p-7'>
             <div className='flex items-center justify-between'>
               <h2 className='text-xl font-bold'>Lista de tarefas</h2>
-              <CreateTaskModal />
+              <CreateOrUpdateTaskModal mode='create' />
             </div>
             <Divider className='my-6' />
             <div className='space-y-4'>
               <h3 className='text-lg font-semibold'>A fazer</h3>
-              <TasksList
-                tasks={toDoTasks()}
-                type='to-do'
-              />
+              <TasksList tasks={toDoTasks()} />
             </div>
             <Divider className='my-6' />
             <div className='space-y-4'>
@@ -39,10 +36,7 @@ function Dashboard() {
                   Limpar
                 </Button>
               </div>
-              <TasksList
-                tasks={completedTasks()}
-                type='completed'
-              />
+              <TasksList tasks={completedTasks()} />
             </div>
           </div>
         </Container>

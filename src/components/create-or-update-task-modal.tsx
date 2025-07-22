@@ -12,45 +12,92 @@ import {
   useDisclosure
 } from '@heroui/react'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { LoaderCircle, Plus } from 'lucide-react'
+import { LoaderCircle, PenLine, Plus } from 'lucide-react'
 import { Controller, useForm } from 'react-hook-form'
 import {
   createTaskSchema,
   type TCreateTaskSchema
 } from '../utils/schemas/tasks/create-task'
 import { tasksStore } from '../store/tasksStore'
-import { getLocalTimeZone, today } from '@internationalized/date'
+import { CalendarDate, getLocalTimeZone, today } from '@internationalized/date'
 import { I18nProvider } from '@react-aria/i18n'
+import type { Task } from '../store/authStore'
+import {
+  updateTaskSchema,
+  type TUpdateTaskSchema
+} from '../utils/schemas/tasks/update-task'
 
-function CreateTaskModal() {
+interface ICreateTaskModalProps {
+  mode: 'create'
+  task?: Task
+}
+
+interface IUpdateTaskModalProps {
+  mode: 'update'
+  task: Task
+}
+
+type ICreateOrUpdateTaskModalProps =
+  | ICreateTaskModalProps
+  | IUpdateTaskModalProps
+
+function CreateOrUpdateTaskModal({
+  task,
+  mode
+}: ICreateOrUpdateTaskModalProps) {
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure()
-  const { createTask, isLoading } = tasksStore((state) => state)
+  const { createTask, updateTask, isLoading } = tasksStore((state) => state)
 
   const { handleSubmit, control, reset } = useForm({
-    resolver: zodResolver(createTaskSchema),
+    resolver: zodResolver(
+      mode === 'create' ? createTaskSchema : updateTaskSchema
+    ),
     defaultValues: {
-      title: '',
-      description: '',
-      dueDate: null,
-      isCompleted: false
+      title: mode === 'create' ? '' : task.title,
+      description: mode === 'create' ? '' : task.description,
+      dueDate:
+        mode === 'create'
+          ? null
+          : new CalendarDate(
+              new Date(task.dueDate).getFullYear(),
+              new Date(task.dueDate).getMonth() + 1,
+              new Date(task.dueDate).getDate()
+            ),
+      isCompleted: mode === 'create' ? false : task.isCompleted
     }
   })
 
-  async function handleCreate(formData: TCreateTaskSchema) {
-    await createTask(formData)
-    reset()
-    onClose()
+  async function handleFormAction(
+    formData: TCreateTaskSchema | TUpdateTaskSchema
+  ) {
+    if (mode === 'create') {
+      await createTask(formData as TCreateTaskSchema)
+      reset()
+      onClose()
+    }
+
+    if (mode === 'update') {
+      await updateTask(formData as TUpdateTaskSchema, task.id)
+      onClose()
+    }
   }
 
   return (
     <>
-      <Button
-        variant='flat'
-        startContent={<Plus />}
-        onPress={onOpen}
-      >
-        Adicionar tarefa
-      </Button>
+      {mode === 'create' ? (
+        <Button
+          variant='flat'
+          startContent={<Plus />}
+          onPress={onOpen}
+        >
+          Adicionar tarefa
+        </Button>
+      ) : (
+        <PenLine
+          className='fill-blue-100 stroke-blue-500 cursor-pointer'
+          onClick={onOpen}
+        />
+      )}
       <Modal
         isOpen={isOpen}
         onOpenChange={onOpenChange}
@@ -59,11 +106,13 @@ function CreateTaskModal() {
         <ModalContent>
           {(onClose) => (
             <>
-              <ModalHeader>Criar tarefa</ModalHeader>
+              <ModalHeader>
+                {mode === 'create' ? 'Criar tarefa' : 'Atualizar tarefa'}
+              </ModalHeader>
               <ModalBody>
                 <Form
                   className='space-y-1'
-                  onSubmit={handleSubmit(handleCreate)}
+                  onSubmit={handleSubmit(handleFormAction)}
                   id='create-task-form'
                 >
                   <Controller
@@ -156,8 +205,10 @@ function CreateTaskModal() {
                 >
                   {isLoading ? (
                     <LoaderCircle className='animate-spin' />
-                  ) : (
+                  ) : mode === 'create' ? (
                     'Criar'
+                  ) : (
+                    'Atualizar'
                   )}
                 </Button>
               </ModalFooter>
@@ -169,4 +220,4 @@ function CreateTaskModal() {
   )
 }
 
-export default CreateTaskModal
+export default CreateOrUpdateTaskModal

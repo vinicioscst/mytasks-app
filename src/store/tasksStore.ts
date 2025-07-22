@@ -13,7 +13,7 @@ export interface ITasksStore {
   toDoTasks: () => Task[]
   loadTasks: (userTasks: Task[]) => void
   createTask: (body: TCreateTaskSchema) => Promise<void>
-  updateTask: (body: TUpdateTaskSchema) => Promise<void>
+  updateTask: (body: TUpdateTaskSchema, id: string) => Promise<void>
   deleteTask: (id: string) => Promise<void>
 }
 
@@ -57,21 +57,19 @@ export const tasksStore = create<ITasksStore>()((set, get) => ({
       set(() => ({ isLoading: false }))
     }
   },
-  updateTask: async (body) => {
+  updateTask: async (body, id) => {
+    const allTasksBackup = [...get().tasks]
+
     try {
       set(() => ({ isLoading: true }))
 
-      const { id, ...task } = body
-      const { data } = (await api.patch(
-        `/tasks/${id}`,
-        task
-      )) as AxiosResponse<Task>
-
       const allTasks = get().tasks
       const updatedTaskIndex = allTasks.findIndex((task) => task.id === id)
-      allTasks[updatedTaskIndex] = data
+      allTasks[updatedTaskIndex] = { ...allTasks[updatedTaskIndex], ...body }
 
       set(() => ({ tasks: allTasks }))
+
+      await api.patch(`/tasks/${id}`, body)
 
       addToast({
         title: 'Tarefa atualizada com sucesso!',
@@ -80,6 +78,7 @@ export const tasksStore = create<ITasksStore>()((set, get) => ({
       })
     } catch (error) {
       console.log(error)
+      set(() => ({ tasks: allTasksBackup }))
       addToast({
         title: 'Ocorreu um erro!',
         description:

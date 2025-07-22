@@ -9,7 +9,7 @@ import {
 import type { Task } from '../store/authStore'
 import { Eye } from 'lucide-react'
 import { Button } from '@heroui/react'
-import { formatDate } from '../utils/actions/formatDate'
+import { formatDate } from '../utils/actions/format-date'
 
 interface ViewTaskModalProps {
   task: Task

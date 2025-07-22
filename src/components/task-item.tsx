@@ -1,7 +1,7 @@
 import { Checkbox } from '@heroui/react'
 import { PenLine } from 'lucide-react'
 import type { Task } from '../store/authStore'
-import { formatDate } from '../utils/actions/formatDate'
+import { formatDate } from '../utils/actions/format-date'
 import ViewTaskModal from './view-task-modal'
 import DeleteTaskModal from './delete-task-modal'
 

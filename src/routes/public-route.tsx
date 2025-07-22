@@ -1,26 +1,19 @@
 import { useEffect } from 'react'
 import { authStore } from '../store/authStore'
-import { Navigate, Outlet, useNavigate } from 'react-router'
+import { Navigate, Outlet } from 'react-router'
 import { LoaderCircle } from 'lucide-react'
+import { verifyUser } from '../utils/actions/verify-user'
 
 export function PublicRoute() {
-  const { isLoggedIn, isLoading, loadUser, userData } = authStore()
-  const navigate = useNavigate()
+  const { isLoading, userData, loadUser } = authStore()
 
   useEffect(() => {
-    async function verifyUser() {
-      if (isLoggedIn && !isLoading) {
-        if (!userData) {
-          await loadUser()
-          navigate('/dashboard')
-          return
-        } else {
-          return
-        }
-      }
-    }
+    verifyUser({
+      userData,
+      isLoading,
+      loadUser
+    })
 
-    verifyUser()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 

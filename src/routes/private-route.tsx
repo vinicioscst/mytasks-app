@@ -2,13 +2,13 @@ import { useEffect } from 'react'
 import { authStore } from '../store/authStore'
 import { Navigate, Outlet } from 'react-router'
 import { LoaderCircle } from 'lucide-react'
-import { verifyUser } from '../utils/actions/verify-user'
+import { verifyIfUserIsLoggedIn } from '../utils/actions/verify-if-user-is-logged-in'
 
 export function PrivateRoute() {
   const { isLoading, userData, loadUser } = authStore()
 
   useEffect(() => {
-    verifyUser({
+    verifyIfUserIsLoggedIn({
       userData,
       isLoading,
       loadUser

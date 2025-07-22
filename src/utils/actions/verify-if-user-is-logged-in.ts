@@ -1,16 +1,16 @@
 import type { User } from '../../store/authStore'
 
-interface VerifyUserParams {
+interface VerifyIfUserIsLoggedInParams {
   userData: User | null
   isLoading: boolean
   loadUser: () => Promise<void>
 }
 
-export async function verifyUser({
+export async function verifyIfUserIsLoggedIn({
   userData,
   isLoading,
   loadUser
-}: VerifyUserParams) {
+}: VerifyIfUserIsLoggedInParams) {
   if (!userData && !isLoading) {
     await loadUser()
   }

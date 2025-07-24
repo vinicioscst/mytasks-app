@@ -15,6 +15,23 @@ export const createTaskSchema = z.object({
       z.null(),
       z.instanceof(CalendarDate, { error: 'Vencimento deve ser uma data' })
     ])
+    .refine(
+      (calendarDate) => {
+        if (!calendarDate) return true
+
+        const today = new Date()
+        const todayCalendar = new CalendarDate(
+          today.getFullYear(),
+          today.getMonth() + 1,
+          today.getDate()
+        )
+
+        return calendarDate.compare(todayCalendar) >= 0
+      },
+      {
+        error: 'Vencimento deve ser hoje ou uma data futura'
+      }
+    )
     .transform((calendarDate) => {
       if (calendarDate) {
         return new Date(

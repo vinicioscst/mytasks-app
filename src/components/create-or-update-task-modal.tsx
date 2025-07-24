@@ -181,6 +181,7 @@ function CreateOrUpdateTaskModal({
                           validationBehavior='aria'
                           isInvalid={invalid}
                           minValue={today(getLocalTimeZone())}
+                          showMonthAndYearPickers
                           isRequired
                         />
                       </I18nProvider>

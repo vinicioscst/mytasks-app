@@ -15,6 +15,7 @@ export interface ITasksStore {
   createTask: (body: TCreateTaskSchema) => Promise<void>
   updateTask: (body: TUpdateTaskSchema, id: string) => Promise<void>
   deleteTask: (id: string) => Promise<void>
+  deleteCompletedTasks: () => Promise<void>
 }
 
 export const tasksStore = create<ITasksStore>()((set, get) => ({
@@ -106,6 +107,47 @@ export const tasksStore = create<ITasksStore>()((set, get) => ({
 
       addToast({
         title: 'Tarefa deletada com sucesso!',
+        color: 'success',
+        variant: 'flat'
+      })
+    } catch (error) {
+      console.log(error)
+      addToast({
+        title: 'Ocorreu um erro!',
+        description:
+          error instanceof AxiosError
+            ? error.response?.data.error
+            : (error as Error).message,
+        color: 'danger',
+        variant: 'flat'
+      })
+    } finally {
+      set(() => ({ isLoading: false }))
+    }
+  },
+  deleteCompletedTasks: async () => {
+    try {
+      set(() => ({ isLoading: true }))
+
+      const allTasks = get().tasks
+
+      if (allTasks.length === 0) {
+        throw new Error('Não há tarefas')
+      }
+      if (allTasks.some((task) => task.isCompleted === false)) {
+        throw new Error('Não há tarefas completas')
+      }
+
+      await api.delete('/tasks/completed')
+
+      const remainingTasks = allTasks.filter((task) => !task.isCompleted)
+
+      set(() => ({
+        tasks: remainingTasks
+      }))
+
+      addToast({
+        title: 'Tarefa(s) deletada(s) com sucesso!',
         color: 'success',
         variant: 'flat'
       })

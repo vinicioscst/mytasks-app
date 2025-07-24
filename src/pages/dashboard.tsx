@@ -1,10 +1,10 @@
-import { Button, Divider } from '@heroui/react'
+import { Divider } from '@heroui/react'
 import Container from '../components/container'
 import Nav from '../components/nav'
-import { BrushCleaning } from 'lucide-react'
 import TasksList from '../components/tasks-list'
 import { tasksStore } from '../store/tasksStore'
 import CreateOrUpdateTaskModal from '../components/create-or-update-task-modal'
+import DeleteCompletedTasksModal from '../components/delete-completed-tasks-modal'
 
 function Dashboard() {
   const { completedTasks, toDoTasks } = tasksStore((state) => state)
@@ -28,13 +28,7 @@ function Dashboard() {
             <div className='space-y-4'>
               <div className='flex items-center justify-between'>
                 <h3 className='text-lg font-semibold'>Feitas</h3>
-                <Button
-                  size='sm'
-                  variant='bordered'
-                  startContent={<BrushCleaning size={16} />}
-                >
-                  Limpar
-                </Button>
+                <DeleteCompletedTasksModal />
               </div>
               <TasksList tasks={completedTasks()} />
             </div>

@@ -3,15 +3,17 @@ import { authStore } from '../store/authStore'
 import { Navigate, Outlet } from 'react-router'
 import { LoaderCircle } from 'lucide-react'
 import { verifyIfUserIsLoggedIn } from '../utils/actions/verify-if-user-is-logged-in'
+import { userStore } from '../store/userStore'
 
 export function PublicRoute() {
-  const { isLoading, userData, loadUser } = authStore()
+  const { isLoading, getUser } = authStore()
+  const { user } = userStore()
 
   useEffect(() => {
     verifyIfUserIsLoggedIn({
-      userData,
+      user,
       isLoading,
-      loadUser
+      getUser
     })
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -25,5 +27,5 @@ export function PublicRoute() {
     )
   }
 
-  return !userData ? <Outlet /> : <Navigate to='/dashboard' />
+  return !user ? <Outlet /> : <Navigate to='/dashboard' />
 }

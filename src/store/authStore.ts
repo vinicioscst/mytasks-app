@@ -5,14 +5,7 @@ import { AxiosError, type AxiosResponse } from 'axios'
 import { addToast } from '@heroui/toast'
 import { api } from '../config/api'
 import { tasksStore } from './tasksStore'
-
-export interface User {
-  id: string
-  name: string
-  email: string
-  avatar: string
-  tasks: Task[]
-}
+import { userStore, type User } from './userStore'
 
 export interface Task {
   id: string
@@ -24,16 +17,14 @@ export interface Task {
 
 export interface IAuthStore {
   isLoading: boolean
-  userData: User | null
   register: (body: TCreateUserSchema) => Promise<void>
   login: (body: TLoginSchema) => Promise<void>
   logout: () => Promise<void>
-  loadUser: () => Promise<void>
+  getUser: () => Promise<void>
 }
 
 export const authStore = create<IAuthStore>()((set) => ({
   isLoading: false,
-  userData: null,
   register: async (body) => {
     try {
       set(() => ({ isLoading: true }))
@@ -65,9 +56,10 @@ export const authStore = create<IAuthStore>()((set) => ({
       set(() => ({ isLoading: true }))
 
       const { data } = (await api.post('/auth', body)) as AxiosResponse<User>
-      set(() => ({ userData: data }))
 
+      const { loadUser } = userStore.getState()
       const { loadTasks } = tasksStore.getState()
+      loadUser(data)
       loadTasks(data.tasks)
     } catch (error) {
       console.log(error)
@@ -88,21 +80,22 @@ export const authStore = create<IAuthStore>()((set) => ({
     try {
       await api.post('/users/logout')
 
-      set(() => ({ userData: null }))
+      const { loadUser } = userStore.getState()
+      loadUser(null)
     } catch (error) {
       console.log(error)
     }
   },
-  loadUser: async () => {
+  getUser: async () => {
     try {
       set(() => ({ isLoading: true }))
 
       const { data } = (await api.get('/users/profile')) as AxiosResponse<User>
 
+      const { loadUser } = userStore.getState()
       const { loadTasks } = tasksStore.getState()
+      loadUser(data)
       loadTasks(data.tasks)
-
-      set(() => ({ userData: data }))
     } catch (error) {
       console.log(error)
     } finally {

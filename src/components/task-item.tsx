@@ -13,7 +13,7 @@ function TaskItem({ task }: TaskItemProps) {
   const formattedTaskDate = formatDate(task.dueDate)
 
   return (
-    <li key={task.id}>
+    <li>
       <div className='flex items-center justify-between'>
         <div>
           <TaskCheckbox

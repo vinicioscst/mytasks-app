@@ -134,7 +134,7 @@ export const tasksStore = create<ITasksStore>()((set, get) => ({
       if (allTasks.length === 0) {
         throw new Error('Não há tarefas')
       }
-      if (allTasks.some((task) => task.isCompleted === false)) {
+      if (allTasks.every((task) => task.isCompleted === false)) {
         throw new Error('Não há tarefas completas')
       }
 

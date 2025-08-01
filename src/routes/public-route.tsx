@@ -1,12 +1,11 @@
 import { useEffect } from 'react'
-import { authStore } from '../store/authStore'
+import { userStore } from '../store/userStore'
 import { Navigate, Outlet } from 'react-router'
 import { LoaderCircle } from 'lucide-react'
 import { verifyIfUserIsLoggedIn } from '../utils/actions/verify-if-user-is-logged-in'
-import { userStore } from '../store/userStore'
 
 export function PublicRoute() {
-  const { isLoading, getUser } = authStore()
+  const { isLoading, getUser } = userStore()
   const { user } = userStore()
 
   useEffect(() => {

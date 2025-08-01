@@ -23,10 +23,9 @@ export interface IAuthStore {
   register: (body: TCreateUserSchema) => Promise<void>
   login: (body: TLoginSchema) => Promise<void>
   logout: () => Promise<void>
-  getUser: () => Promise<void>
 }
 
-export const authStore = create<IAuthStore>()((set, get) => ({
+export const authStore = create<IAuthStore>()((set) => ({
   isLoading: false,
   accessToken: null,
   setAccessToken: (accessToken) => {
@@ -96,29 +95,6 @@ export const authStore = create<IAuthStore>()((set, get) => ({
       set(() => ({ accessToken: null }))
     } catch (error) {
       console.log(error)
-    }
-  },
-  getUser: async () => {
-    try {
-      set(() => ({ isLoading: true }))
-
-      const { data } = (await api.get('/users/profile', {
-        headers: {
-          Authorization: `Bearer ${get().accessToken}`
-        }
-      })) as AxiosResponse<IAuthUserResponse>
-
-      console.log(data)
-
-      const { loadUser } = userStore.getState()
-      const { loadTasks } = tasksStore.getState()
-      loadUser(data.user)
-      loadTasks(data.user.tasks)
-      set(() => ({ accessToken: data.accessToken }))
-    } catch (error) {
-      console.log(error)
-    } finally {
-      set(() => ({ isLoading: false }))
     }
   }
 }))

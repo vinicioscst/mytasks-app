@@ -5,6 +5,8 @@ import { api } from '../config/api'
 import { addToast } from '@heroui/toast'
 import { AxiosError, type AxiosResponse } from 'axios'
 import type { IUpdateUserResponse } from '../types/responses/user-responses'
+import type { IAuthUserResponse } from '../types/responses/auth-responses'
+import { tasksStore } from './tasksStore'
 
 export interface User {
   id: string
@@ -18,6 +20,7 @@ export interface IUserStore {
   isLoading: boolean
   user: User | null
   loadUser: (loggedUser: User | null) => void
+  getUser: () => Promise<void>
   updateUser: (body: TUpdateUserSchema, id: string) => Promise<void>
 }
 
@@ -26,6 +29,30 @@ export const userStore = create<IUserStore>()((set) => ({
   user: null,
   loadUser: (loggedUser) => {
     set(() => ({ user: loggedUser }))
+  },
+  getUser: async () => {
+    try {
+      set(() => ({ isLoading: true }))
+
+      const { accessToken, setAccessToken } = authStore.getState()
+
+      const { data } = (await api.get('/users/profile', {
+        headers: {
+          Authorization: `Bearer ${accessToken}`
+        }
+      })) as AxiosResponse<IAuthUserResponse>
+
+      setAccessToken(data.accessToken)
+
+      set(() => ({ user: data.user }))
+
+      const { loadTasks } = tasksStore.getState()
+      loadTasks(data.user.tasks)
+    } catch (error) {
+      console.log(error)
+    } finally {
+      set(() => ({ isLoading: false }))
+    }
   },
   updateUser: async (body, id) => {
     try {

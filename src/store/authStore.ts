@@ -5,7 +5,8 @@ import { AxiosError, type AxiosResponse } from 'axios'
 import { addToast } from '@heroui/toast'
 import { api } from '../config/api'
 import { tasksStore } from './tasksStore'
-import { userStore, type User } from './userStore'
+import { userStore } from './userStore'
+import type { IAuthUserResponse } from '../types/responses/auth-responses'
 
 export interface Task {
   id: string
@@ -17,14 +18,20 @@ export interface Task {
 
 export interface IAuthStore {
   isLoading: boolean
+  accessToken: string | null
+  setAccessToken: (accessToken: string) => void
   register: (body: TCreateUserSchema) => Promise<void>
   login: (body: TLoginSchema) => Promise<void>
   logout: () => Promise<void>
   getUser: () => Promise<void>
 }
 
-export const authStore = create<IAuthStore>()((set) => ({
+export const authStore = create<IAuthStore>()((set, get) => ({
   isLoading: false,
+  accessToken: null,
+  setAccessToken: (accessToken) => {
+    set(() => ({ accessToken }))
+  },
   register: async (body) => {
     try {
       set(() => ({ isLoading: true }))
@@ -55,12 +62,16 @@ export const authStore = create<IAuthStore>()((set) => ({
     try {
       set(() => ({ isLoading: true }))
 
-      const { data } = (await api.post('/auth', body)) as AxiosResponse<User>
+      const { data } = (await api.post(
+        '/auth',
+        body
+      )) as AxiosResponse<IAuthUserResponse>
 
       const { loadUser } = userStore.getState()
       const { loadTasks } = tasksStore.getState()
-      loadUser(data)
-      loadTasks(data.tasks)
+      loadUser(data.user)
+      loadTasks(data.user.tasks)
+      set(() => ({ accessToken: data.accessToken }))
     } catch (error) {
       console.log(error)
       addToast({
@@ -82,6 +93,7 @@ export const authStore = create<IAuthStore>()((set) => ({
 
       const { loadUser } = userStore.getState()
       loadUser(null)
+      set(() => ({ accessToken: null }))
     } catch (error) {
       console.log(error)
     }
@@ -90,12 +102,19 @@ export const authStore = create<IAuthStore>()((set) => ({
     try {
       set(() => ({ isLoading: true }))
 
-      const { data } = (await api.get('/users/profile')) as AxiosResponse<User>
+      const { data } = (await api.get('/users/profile', {
+        headers: {
+          Authorization: `Bearer ${get().accessToken}`
+        }
+      })) as AxiosResponse<IAuthUserResponse>
+
+      console.log(data)
 
       const { loadUser } = userStore.getState()
       const { loadTasks } = tasksStore.getState()
-      loadUser(data)
-      loadTasks(data.tasks)
+      loadUser(data.user)
+      loadTasks(data.user.tasks)
+      set(() => ({ accessToken: data.accessToken }))
     } catch (error) {
       console.log(error)
     } finally {

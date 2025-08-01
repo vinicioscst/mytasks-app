@@ -1,10 +1,15 @@
 import { create } from 'zustand'
 import type { TCreateTaskSchema } from '../utils/schemas/tasks/create-task'
 import type { TUpdateTaskSchema } from '../utils/schemas/tasks/update-task'
-import type { Task } from './authStore'
+import { authStore, type Task } from './authStore'
 import { api } from '../config/api'
 import { addToast } from '@heroui/toast'
 import { AxiosError, type AxiosResponse } from 'axios'
+import type {
+  ICreateTaskResponse,
+  IDeleteTaskResponse,
+  IUpdateTaskResponse
+} from '../types/responses/task-responses'
 
 export interface ITasksStore {
   isLoading: boolean
@@ -33,10 +38,20 @@ export const tasksStore = create<ITasksStore>()((set, get) => ({
   createTask: async (body) => {
     try {
       set(() => ({ isLoading: true }))
+      const { accessToken } = authStore.getState()
 
-      const { data } = (await api.post('/tasks', body)) as AxiosResponse<Task>
+      const { data } = (await api.post('/tasks', body, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`
+        }
+      })) as AxiosResponse<ICreateTaskResponse>
 
-      set((state) => ({ tasks: [...state.tasks, data] }))
+      set((state) => ({ tasks: [...state.tasks, data.task] }))
+
+      if (data.accessToken) {
+        const { setAccessToken } = authStore.getState()
+        setAccessToken(data.accessToken)
+      }
 
       addToast({
         title: 'Tarefa criada com sucesso!',
@@ -63,6 +78,13 @@ export const tasksStore = create<ITasksStore>()((set, get) => ({
 
     try {
       set(() => ({ isLoading: true }))
+      const { accessToken } = authStore.getState()
+
+      const { data } = (await api.patch(`/tasks/${id}`, body, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`
+        }
+      })) as AxiosResponse<IUpdateTaskResponse>
 
       const allTasks = get().tasks
       const updatedTaskIndex = allTasks.findIndex((task) => task.id === id)
@@ -70,7 +92,10 @@ export const tasksStore = create<ITasksStore>()((set, get) => ({
 
       set(() => ({ tasks: allTasks }))
 
-      await api.patch(`/tasks/${id}`, body)
+      if (data.accessToken) {
+        const { setAccessToken } = authStore.getState()
+        setAccessToken(data.accessToken)
+      }
 
       addToast({
         title: 'Tarefa atualizada com sucesso!',
@@ -96,7 +121,18 @@ export const tasksStore = create<ITasksStore>()((set, get) => ({
   deleteTask: async (id) => {
     try {
       set(() => ({ isLoading: true }))
-      await api.delete(`/tasks/${id}`)
+      const { accessToken } = authStore.getState()
+
+      const { data } = (await api.delete(`/tasks/${id}`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`
+        }
+      })) as AxiosResponse<IDeleteTaskResponse>
+
+      if (data.accessToken) {
+        const { setAccessToken } = authStore.getState()
+        setAccessToken(data.accessToken)
+      }
 
       const allTasks = get().tasks
       const remainingTasks = allTasks.filter((task) => task.id !== id)
@@ -128,6 +164,7 @@ export const tasksStore = create<ITasksStore>()((set, get) => ({
   deleteCompletedTasks: async () => {
     try {
       set(() => ({ isLoading: true }))
+      const { accessToken } = authStore.getState()
 
       const allTasks = get().tasks
 
@@ -138,7 +175,16 @@ export const tasksStore = create<ITasksStore>()((set, get) => ({
         throw new Error('Não há tarefas completas')
       }
 
-      await api.delete('/tasks/completed')
+      const { data } = (await api.delete('/tasks/completed', {
+        headers: {
+          Authorization: `Bearer ${accessToken}`
+        }
+      })) as AxiosResponse<IDeleteTaskResponse>
+
+      if (data.accessToken) {
+        const { setAccessToken } = authStore.getState()
+        setAccessToken(data.accessToken)
+      }
 
       const remainingTasks = allTasks.filter((task) => !task.isCompleted)
 

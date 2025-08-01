@@ -1,9 +1,10 @@
 import { create } from 'zustand'
 import type { TUpdateUserSchema } from '../utils/schemas/user/update-user'
-import type { Task } from './authStore'
+import { authStore, type Task } from './authStore'
 import { api } from '../config/api'
 import { addToast } from '@heroui/toast'
 import { AxiosError, type AxiosResponse } from 'axios'
+import type { IUpdateUserResponse } from '../types/responses/user-responses'
 
 export interface User {
   id: string
@@ -29,12 +30,20 @@ export const userStore = create<IUserStore>()((set) => ({
   updateUser: async (body, id) => {
     try {
       set(() => ({ isLoading: true }))
+      const { accessToken } = authStore.getState()
 
-      const { data } = (await api.patch(`/users/${id}`, body)) as AxiosResponse<
-        Partial<User>
-      >
+      const { data } = (await api.patch(`/users/${id}`, body, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`
+        }
+      })) as AxiosResponse<IUpdateUserResponse>
 
-      set((state) => ({ user: { ...state, ...data } as User }))
+      if (data.accessToken) {
+        const { setAccessToken } = authStore.getState()
+        setAccessToken(data.accessToken)
+      }
+
+      set((state) => ({ user: { ...state.user, ...data.user } as User }))
 
       addToast({
         title: 'Usuário atualizado com sucesso!',

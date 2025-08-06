@@ -34,8 +34,9 @@ function DeleteCompletedTasksModal() {
         onOpenChange={onOpenChange}
         hideCloseButton={true}
         size='lg'
+        placement='center'
       >
-        <ModalContent className='gap'>
+        <ModalContent>
           {(onClose) => (
             <>
               <ModalHeader>

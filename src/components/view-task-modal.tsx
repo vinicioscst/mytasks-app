@@ -21,17 +21,25 @@ function ViewTaskModal({ task }: ViewTaskModalProps) {
 
   return (
     <>
-      <Eye
-        className='fill-green-100 stroke-green-500 cursor-pointer'
-        onClick={onOpen}
-      />
+      <Button
+        className='min-w-fit'
+        size='sm'
+        variant='flat'
+        onPress={onOpen}
+      >
+        <Eye
+          size={14}
+          className='stroke-neutral-600 group-hover:stroke-neutral-500 transition-all'
+        />
+      </Button>
       <Modal
         isOpen={isOpen}
         onOpenChange={onOpenChange}
         hideCloseButton={true}
         size='lg'
+        placement='center'
       >
-        <ModalContent className='gap'>
+        <ModalContent>
           {(onClose) => (
             <>
               <ModalHeader className='flex flex-col'>

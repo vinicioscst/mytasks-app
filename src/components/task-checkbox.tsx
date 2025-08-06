@@ -22,10 +22,10 @@ function TaskCheckbox({ isSelected, taskTitle, taskId }: TaskCheckboxProps) {
     <Checkbox
       isSelected={isSelected}
       lineThrough={isSelected}
-      color={isSelected ? 'success' : 'default'}
+      color={isSelected ? 'secondary' : 'default'}
       onChange={handleSelection}
     >
-      {taskTitle}
+      <p className='font-medium line-clamp-2 sm:line-clamp-1'>{taskTitle}</p>
     </Checkbox>
   )
 }

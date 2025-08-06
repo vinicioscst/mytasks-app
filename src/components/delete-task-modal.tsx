@@ -25,15 +25,23 @@ function DeleteTaskModal({ taskId, taskTitle }: DeleteTaskModalProps) {
 
   return (
     <>
-      <Trash2
-        className='fill-red-100 stroke-red-500 cursor-pointer'
-        onClick={onOpen}
-      />
+      <Button
+        className='min-w-fit'
+        size='sm'
+        variant='flat'
+        onPress={onOpen}
+      >
+        <Trash2
+          size={14}
+          className='stroke-red-400'
+        />
+      </Button>
       <Modal
         isOpen={isOpen}
         onOpenChange={onOpenChange}
         hideCloseButton={true}
         size='lg'
+        placement='center'
       >
         <ModalContent className='gap'>
           {(onClose) => (

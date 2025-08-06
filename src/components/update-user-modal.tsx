@@ -55,8 +55,9 @@ function UpdateUserModal({
       isOpen={isOpen}
       onOpenChange={onOpenChange}
       size='lg'
+      placement='center'
     >
-      <ModalContent className='gap'>
+      <ModalContent>
         {(onClose) => (
           <>
             <ModalHeader>

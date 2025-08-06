@@ -12,7 +12,7 @@ import {
   useDisclosure
 } from '@heroui/react'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { LoaderCircle, PenLine, Plus } from 'lucide-react'
+import { LoaderCircle, Plus, SquarePen } from 'lucide-react'
 import { Controller, useForm } from 'react-hook-form'
 import {
   createTaskSchema,
@@ -87,21 +87,34 @@ function CreateOrUpdateTaskModal({
       {mode === 'create' ? (
         <Button
           variant='flat'
-          startContent={<Plus />}
+          startContent={
+            <Plus
+              size={16}
+              className='hidden xs:block'
+            />
+          }
           onPress={onOpen}
         >
           Adicionar tarefa
         </Button>
       ) : (
-        <PenLine
-          className='fill-blue-100 stroke-blue-500 cursor-pointer'
-          onClick={onOpen}
-        />
+        <Button
+          className='min-w-fit'
+          size='sm'
+          variant='flat'
+          onPress={onOpen}
+        >
+          <SquarePen
+            size={14}
+            className='stroke-neutral-600'
+          />
+        </Button>
       )}
       <Modal
         isOpen={isOpen}
         onOpenChange={onOpenChange}
         size='lg'
+        placement='center'
       >
         <ModalContent>
           {(onClose) => (

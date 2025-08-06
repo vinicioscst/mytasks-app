@@ -11,8 +11,12 @@ function AuthCard() {
     <Card className='py-4'>
       <CardHeader>
         <div className='w-full space-y-1 text-center'>
-          <h2 className='text-2xl font-bold'>Bem-vindo ao My Tasks</h2>
-          <p>Entre na sua conta ou crie uma nova para começar</p>
+          <h2 className='text-lg sx:text-2xl font-bold'>
+            Bem-vindo ao My Tasks
+          </h2>
+          <p className='text-sm sx:text-base'>
+            Entre na sua conta ou crie uma nova para começar
+          </p>
         </div>
       </CardHeader>
       <CardBody>

@@ -1,18 +1,18 @@
-import { LayoutList } from 'lucide-react'
-import Container from '../components/container'
-import { Navbar, NavbarContent, NavbarItem } from '@heroui/navbar'
 import {
   Dropdown,
-  DropdownTrigger,
+  DropdownItem,
   DropdownMenu,
   DropdownSection,
-  DropdownItem
+  DropdownTrigger
 } from '@heroui/dropdown'
+import { Navbar, NavbarContent, NavbarItem } from '@heroui/navbar'
 import { Avatar, useDisclosure } from '@heroui/react'
+import { LayoutList } from 'lucide-react'
 import { useNavigate } from 'react-router'
+import Container from '../components/container'
 import { authStore } from '../store/authStore'
-import UpdateUserModal from './update-user-modal'
 import { userStore } from '../store/userStore'
+import UpdateUserModal from './update-user-modal'
 
 function Nav() {
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure()

@@ -1,12 +1,12 @@
+import { addToast } from '@heroui/toast'
+import { AxiosError, type AxiosResponse } from 'axios'
 import { create } from 'zustand'
+import { api } from '../config/api'
+import type { IAuthUserResponse } from '../types/responses/auth-responses'
 import type { TCreateUserSchema } from '../utils/schemas/user/create-user'
 import type { TLoginSchema } from '../utils/schemas/user/login'
-import { AxiosError, type AxiosResponse } from 'axios'
-import { addToast } from '@heroui/toast'
-import { api } from '../config/api'
 import { tasksStore } from './tasksStore'
 import { userStore } from './userStore'
-import type { IAuthUserResponse } from '../types/responses/auth-responses'
 
 export interface Task {
   id: string

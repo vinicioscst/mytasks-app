@@ -1,11 +1,11 @@
-import { create } from 'zustand'
-import type { TUpdateUserSchema } from '../utils/schemas/user/update-user'
-import { authStore, type Task } from './authStore'
-import { api } from '../config/api'
 import { addToast } from '@heroui/toast'
 import { AxiosError, type AxiosResponse } from 'axios'
-import type { IUpdateUserResponse } from '../types/responses/user-responses'
+import { create } from 'zustand'
+import { api } from '../config/api'
 import type { IAuthUserResponse } from '../types/responses/auth-responses'
+import type { IUpdateUserResponse } from '../types/responses/user-responses'
+import type { TUpdateUserSchema } from '../utils/schemas/user/update-user'
+import { authStore, type Task } from './authStore'
 import { tasksStore } from './tasksStore'
 
 export interface User {

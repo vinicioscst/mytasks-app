@@ -6,8 +6,9 @@ import {
   DropdownTrigger
 } from '@heroui/dropdown'
 import { Navbar, NavbarContent, NavbarItem } from '@heroui/navbar'
-import { Avatar, useDisclosure } from '@heroui/react'
+import { Avatar } from '@heroui/react'
 import { LayoutList } from 'lucide-react'
+import { useState } from 'react'
 import { useNavigate } from 'react-router'
 import Container from '../components/container'
 import { authStore } from '../store/authStore'
@@ -15,7 +16,7 @@ import { userStore } from '../store/userStore'
 import UpdateUserModal from './update-user-modal'
 
 function Nav() {
-  const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure()
+  const [isOpen, setIsOpen] = useState(false)
   const navigate = useNavigate()
   const { logout } = authStore((state) => state)
   const { user } = userStore((state) => state)
@@ -71,7 +72,7 @@ function Nav() {
                     <DropdownSection aria-label='Ações de usuário'>
                       <DropdownItem
                         key='edit-profile'
-                        onPress={onOpen}
+                        onPress={() => setIsOpen(true)}
                       >
                         <p>Editar informações</p>
                       </DropdownItem>
@@ -93,8 +94,7 @@ function Nav() {
       </Navbar>
       <UpdateUserModal
         isOpen={isOpen}
-        onOpenChange={onOpenChange}
-        onClose={onClose}
+        setIsOpen={setIsOpen}
       />
     </>
   )

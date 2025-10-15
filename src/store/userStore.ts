@@ -22,6 +22,7 @@ export interface IUserStore {
   loadUser: (loggedUser: User | null) => void
   getUser: () => Promise<void>
   updateUser: (body: TUpdateUserSchema, id: string) => Promise<void>
+  deleteUser: (id: string) => Promise<void>
 }
 
 export const userStore = create<IUserStore>()((set) => ({
@@ -77,6 +78,34 @@ export const userStore = create<IUserStore>()((set) => ({
         color: 'success',
         variant: 'flat'
       })
+    } catch (error) {
+      console.log(error)
+      addToast({
+        title: 'Ocorreu um erro!',
+        description:
+          error instanceof AxiosError
+            ? error.response?.data.error
+            : (error as Error).message,
+        color: 'danger',
+        variant: 'flat'
+      })
+    } finally {
+      set(() => ({ isLoading: false }))
+    }
+  },
+  deleteUser: async (id) => {
+    try {
+      set(() => ({ isLoading: true }))
+      const { setAccessToken, accessToken } = authStore.getState()
+
+      await api.delete(`/users/${id}`, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`
+        }
+      })
+
+      set(() => ({ user: null }))
+      setAccessToken(null)
     } catch (error) {
       console.log(error)
       addToast({

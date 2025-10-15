@@ -19,7 +19,7 @@ export interface Task {
 export interface IAuthStore {
   isLoading: boolean
   accessToken: string | null
-  setAccessToken: (accessToken: string) => void
+  setAccessToken: (accessToken: string | null) => void
   register: (body: TCreateUserSchema) => Promise<void>
   login: (body: TLoginSchema) => Promise<void>
   logout: () => Promise<void>
